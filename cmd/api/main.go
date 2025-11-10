@@ -67,9 +67,9 @@ func newHTTPServer(diContainer *container.Container) *http.Server {
 
 func runServer(srv *http.Server, logger *zap.Logger) {
 	go func() {
-		logger.Info("starting server on :%s", zap.String("addr", srv.Addr))
+		logger.Info("starting server on:", zap.String("addr", srv.Addr))
 		if err := srv.ListenAndServe(); err != nil {
-			logger.Info("stopped listening server: %v", zap.Error(err))
+			logger.Info("stopped listening server:", zap.Error(err))
 		}
 	}()
 }

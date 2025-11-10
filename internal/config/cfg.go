@@ -2,21 +2,26 @@ package config
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"strconv"
 )
 
 type Config struct {
-	AppEnv     string
-	AppPort    string
-	DbHost     string
-	DbPort     string
-	DbName     string
-	DbUser     string
-	DbPassword string
-	DbSsl      string
-	CORS       string
-	AuthAppKey string
-	AppLogLvl  string
+	AppEnv        string
+	AppPort       string
+	DbHost        string
+	DbPort        string
+	DbName        string
+	DbUser        string
+	DbPassword    string
+	DbSsl         string
+	CORS          string
+	AuthAppKey    string
+	AppLogLvl     string
+	RedisAddr     string
+	RedisPassword string
+	RedisDB       int
 }
 
 func LoadConfig() (*Config, error) {
@@ -79,17 +84,36 @@ func LoadConfig() (*Config, error) {
 		appEnv = "debug"
 	}
 
+	redisAddr := os.Getenv("REDIS_ADDR")
+	if redisAddr == "" {
+		return nil, fmt.Errorf("REDIS_ADDR environment variable is not set")
+	}
+
+	redisPassword := os.Getenv("REDIS_PASSWORD")
+
+	redisDB := os.Getenv("REDIS_DB")
+	if redisDB == "" {
+		return nil, fmt.Errorf("REDIS_DB environment variable is not set")
+	}
+	redisDBInt, err := strconv.Atoi(redisDB)
+	if err != nil {
+		log.Fatal("Invalid REDIS_DB value: ", err)
+	}
+
 	return &Config{
-		AppEnv:     appEnv,
-		AppPort:    appPort,
-		DbHost:     dbHost,
-		DbPort:     dbPort,
-		DbName:     dbName,
-		DbUser:     dbUser,
-		DbPassword: dbPassword,
-		DbSsl:      dbSsl,
-		CORS:       corsAllowedOrigins,
-		AuthAppKey: authAppKey,
-		AppLogLvl:  appLogLvl,
+		AppEnv:        appEnv,
+		AppPort:       appPort,
+		DbHost:        dbHost,
+		DbPort:        dbPort,
+		DbName:        dbName,
+		DbUser:        dbUser,
+		DbPassword:    dbPassword,
+		DbSsl:         dbSsl,
+		CORS:          corsAllowedOrigins,
+		AuthAppKey:    authAppKey,
+		AppLogLvl:     appLogLvl,
+		RedisAddr:     redisAddr,
+		RedisPassword: redisPassword,
+		RedisDB:       redisDBInt,
 	}, nil
 }
