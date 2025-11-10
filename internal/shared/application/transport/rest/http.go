@@ -3,6 +3,7 @@ package rest
 import (
 	"github.com/go-chi/chi/v5"
 	"net/http"
+	dboarduserhttp "serv_shop_haircompany/internal/modules/dashboard_user/v1/transport/rest"
 	linehttp "serv_shop_haircompany/internal/modules/line/v1/transport/rest"
 	"serv_shop_haircompany/internal/shared/application/container"
 	"serv_shop_haircompany/internal/shared/application/middleware"
@@ -20,6 +21,7 @@ func NewHTTPRouter(container *container.Container) *chi.Mux {
 	r.MethodNotAllowed(MethodNotAllowedHandler)
 
 	r.Route("/api/v1", func(r chi.Router) {
+		dboarduserhttp.DashboardUserV1Routes(r, container)
 		linehttp.LineV1Routes(r, container)
 	})
 
