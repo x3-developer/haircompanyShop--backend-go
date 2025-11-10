@@ -2,7 +2,7 @@ OUTPUT_DIR = bin
 BINARY = app
 API_MAIN = cmd/api/main.go
 
-.PHONY: all build clean run tidy
+.PHONY: all build clean run tidy test cover migration migrate
 
 all: build
 
@@ -42,3 +42,24 @@ migrate:
 	fi
 	@echo "Running migrations $(direction)..."
 	go run migrations/auto.go $(direction)
+
+test:
+	@echo "Running unit tests..."
+	go test -v ./...
+
+db.test.up:
+	docker compose -f docker-compose.test.yml up -d
+
+db.test.down:
+	docker compose -f docker-compose.test.yml down -v
+
+migrate.test:
+	migrate -path migrations -database "postgres://test:test@localhost:5433/testdb?sslmode=disable" up
+
+test.integration: db.test.up migrate.test
+	go test -v -tags=integration ./...
+
+cover:
+	@echo "Running tests with coverage..."
+	go test -coverprofile=cover.out ./...
+	go tool cover -html=cover.out

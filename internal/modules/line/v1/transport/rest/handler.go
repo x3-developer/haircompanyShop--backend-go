@@ -51,7 +51,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	createdModel, errFields, err := h.createUC.Execute(ctx, model)
 	if err != nil {
 		msg := fmt.Sprintf("failed to create line: %v", err)
-		response.SendError(w, http.StatusBadRequest, msg, response.ServerError)
+		response.SendError(w, http.StatusInternalServerError, msg, response.ServerError)
 		return
 	}
 	if errFields != nil {
