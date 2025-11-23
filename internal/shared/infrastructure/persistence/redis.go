@@ -2,9 +2,10 @@ package persistence
 
 import (
 	"context"
+	"serv_shop_haircompany/internal/config"
+
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
-	"serv_shop_haircompany/internal/config"
 )
 
 type Redis struct {

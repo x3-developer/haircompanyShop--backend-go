@@ -3,9 +3,10 @@ package persistence
 import (
 	"context"
 	"fmt"
+	"serv_shop_haircompany/internal/config"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
-	"serv_shop_haircompany/internal/config"
 )
 
 type Postgres struct {

@@ -60,3 +60,25 @@ func (r *repo) ExistsByUniqueFields(ctx context.Context, email string) (bool, er
 
 	return exists, nil
 }
+
+func (r *repo) FindByEmail(ctx context.Context, email string) (*domain.DashboardUser, error) {
+	const q = `SELECT id, email, password, role, created_at, updated_at FROM dashboard_users WHERE email = $1;`
+
+	ctx, cancel := context.WithTimeout(ctx, 500*time.Millisecond)
+	defer cancel()
+
+	var model domain.DashboardUser
+	err := r.DB.Pool.QueryRow(ctx, q, email).Scan(
+		&model.ID,
+		&model.Email,
+		&model.Password,
+		&model.Role,
+		&model.CreatedAt,
+		&model.UpdatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model, nil
+}

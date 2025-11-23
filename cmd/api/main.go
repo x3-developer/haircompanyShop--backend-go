@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"serv_shop_haircompany/internal/config"
 	"serv_shop_haircompany/internal/shared/application/container"
-	"serv_shop_haircompany/internal/shared/application/transport/rest"
+	"serv_shop_haircompany/internal/shared/transport/rest"
 	"serv_shop_haircompany/internal/shared/utils/logging"
 	"sync"
 	"syscall"

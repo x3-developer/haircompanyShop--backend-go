@@ -1,10 +1,13 @@
 package rest
 
 import (
-	"github.com/go-chi/chi/v5"
 	"serv_shop_haircompany/internal/modules/dashboard_user/v1/application/usecase"
 	"serv_shop_haircompany/internal/modules/dashboard_user/v1/infrastructure/persistence"
 	"serv_shop_haircompany/internal/shared/application/container"
+	"serv_shop_haircompany/internal/shared/application/middleware"
+	"serv_shop_haircompany/internal/shared/domain/valueobject"
+
+	"github.com/go-chi/chi/v5"
 )
 
 func DashboardUserV1Routes(r chi.Router, container *container.Container) {
@@ -14,5 +17,9 @@ func DashboardUserV1Routes(r chi.Router, container *container.Container) {
 
 	const baseRoute = "/dashboard-user"
 
-	r.Post(baseRoute, h.Create)
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.DashboardAuthMiddleware(container.TokenSvc))
+
+		r.With(middleware.DashboardRoleMiddleware(valueobject.RoleAdmin)).Post(baseRoute, h.Create)
+	})
 }

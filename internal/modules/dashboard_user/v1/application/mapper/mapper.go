@@ -4,6 +4,7 @@ import (
 	"serv_shop_haircompany/internal/modules/dashboard_user/v1/application/dto"
 	"serv_shop_haircompany/internal/modules/dashboard_user/v1/domain"
 	"serv_shop_haircompany/internal/modules/dashboard_user/v1/domain/valueobject"
+	sharedvalueobject "serv_shop_haircompany/internal/shared/domain/valueobject"
 	"serv_shop_haircompany/internal/shared/utils/response"
 )
 
@@ -32,8 +33,8 @@ func ToModelFromCreateDTO(createDto dto.CreateDTO) (*domain.DashboardUser, []res
 		}
 	}
 
-	role := domain.Role(createDto.Role)
-	if !role.IsValid() {
+	role, err := sharedvalueobject.NewDashboardRole(createDto.Role)
+	if err != nil {
 		return nil, []response.ErrorField{
 			response.NewErrorField("role", string(response.BadRequest)),
 		}

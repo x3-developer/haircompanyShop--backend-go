@@ -12,6 +12,7 @@ const (
 	MinLength        ErrorCode = "MIN_LENGTH"
 	MaxLength        ErrorCode = "MAX_LENGTH"
 	Forbidden        ErrorCode = "FORBIDDEN"
+	Unauthorized     ErrorCode = "UNAUTHORIZED"
 )
 
 func GetErrorCodeByTag(tag string) ErrorCode {

@@ -22,6 +22,7 @@ type Config struct {
 	RedisAddr     string
 	RedisPassword string
 	RedisDB       int
+	AppSecret     string
 }
 
 func LoadConfig() (*Config, error) {
@@ -100,6 +101,11 @@ func LoadConfig() (*Config, error) {
 		log.Fatal("Invalid REDIS_DB value: ", err)
 	}
 
+	appSecret := os.Getenv("APP_SECRET")
+	if appSecret == "" {
+		return nil, fmt.Errorf("APP_SECRET environment variable is not set")
+	}
+
 	return &Config{
 		AppEnv:        appEnv,
 		AppPort:       appPort,
@@ -115,5 +121,6 @@ func LoadConfig() (*Config, error) {
 		RedisAddr:     redisAddr,
 		RedisPassword: redisPassword,
 		RedisDB:       redisDBInt,
+		AppSecret:     appSecret,
 	}, nil
 }
