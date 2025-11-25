@@ -1,6 +1,8 @@
 package dto
 
-import "time"
+import (
+	"time"
+)
 
 type ResponseDTO struct {
 	Id        uint      `json:"id"`

@@ -2,26 +2,35 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"serv_shop_haircompany/internal/modules/line/v1/domain"
 	"serv_shop_haircompany/internal/shared/utils/response"
 )
 
-type CreateUseCase interface {
+type UpdateUseCase interface {
 	Execute(ctx context.Context, model *domain.Line) (*domain.Line, []response.ErrorField, error)
 }
 
-type createUseCase struct {
+type updateUseCase struct {
 	repo domain.Repository
 }
 
-func NewCreateUseCase(repo domain.Repository) CreateUseCase {
-	return &createUseCase{
+func NewUpdateUseCase(repo domain.Repository) CreateUseCase {
+	return &updateUseCase{
 		repo: repo,
 	}
 }
 
-func (u *createUseCase) Execute(ctx context.Context, model *domain.Line) (*domain.Line, []response.ErrorField, error) {
-	conflicts, err := u.repo.FindUniqueConflicts(ctx, model.Name, 0)
+func (u *updateUseCase) Execute(ctx context.Context, model *domain.Line) (*domain.Line, []response.ErrorField, error) {
+	existingModel, err := u.repo.GetById(ctx, model.ID)
+	if err != nil {
+		return nil, nil, err
+	}
+	if existingModel == nil {
+		return nil, nil, errors.New("line not found")
+	}
+
+	conflicts, err := u.repo.FindUniqueConflicts(ctx, model.Name, model.ID)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -35,10 +44,10 @@ func (u *createUseCase) Execute(ctx context.Context, model *domain.Line) (*domai
 		return nil, validationErrors, nil
 	}
 
-	createdModel, err := u.repo.Create(ctx, model)
+	updatedModel, err := u.repo.Update(ctx, model)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return createdModel, nil, nil
+	return updatedModel, nil, nil
 }

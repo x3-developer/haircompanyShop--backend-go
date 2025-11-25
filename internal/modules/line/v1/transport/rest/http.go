@@ -12,8 +12,12 @@ import (
 
 func LineV1Routes(r chi.Router, container *container.Container) {
 	repo := persistence.NewRepo(container.PostgresDB)
+	queryRepo := persistence.NewQueryRepo(container.PostgresDB)
 	createUC := usecase.NewCreateUseCase(repo)
-	h := NewHandler(createUC)
+	updateUC := usecase.NewUpdateUseCase(repo)
+	getByIdUC := usecase.NewGetByIDUseCase(repo)
+	getListUC := usecase.NewGetListUseCase(queryRepo)
+	h := NewHandler(createUC, updateUC, getByIdUC, getListUC)
 
 	const baseRoute = "/line"
 
@@ -21,5 +25,8 @@ func LineV1Routes(r chi.Router, container *container.Container) {
 		r.Use(middleware.DashboardAuthMiddleware(container.TokenSvc))
 
 		r.With(middleware.DashboardRoleMiddleware(valueobject.RoleAdmin)).Post(baseRoute, h.Create)
+		r.With(middleware.DashboardRoleMiddleware(valueobject.RoleAdmin)).Patch(baseRoute+"/{id}", h.Update)
+		r.With(middleware.DashboardRoleMiddleware(valueobject.RoleAdmin, valueobject.RoleOperator, valueobject.RoleManager)).Get(baseRoute+"/{id}", h.GetByID)
+		r.With(middleware.DashboardRoleMiddleware(valueobject.RoleAdmin, valueobject.RoleOperator, valueobject.RoleManager)).Get(baseRoute, h.GetList)
 	})
 }

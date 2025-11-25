@@ -30,3 +30,22 @@ func ToModelFromCreateDTO(createDto dto.CreateDTO) (*domain.Line, []response.Err
 		Color: colorVO,
 	}, nil
 }
+
+func ToModelFromUpdateDTO(updateDto dto.UpdateDTO, model *domain.Line) (*domain.Line, []response.ErrorField) {
+	if updateDto.Color != "" {
+		colorVO, err := valueobject.NewColorVO(updateDto.Color)
+		if err != nil {
+			return nil, []response.ErrorField{
+				response.NewErrorField("color", string(response.BadRequest)),
+			}
+		}
+
+		model.Color = colorVO
+	}
+
+	if updateDto.Name != "" {
+		model.Name = updateDto.Name
+	}
+
+	return model, nil
+}
